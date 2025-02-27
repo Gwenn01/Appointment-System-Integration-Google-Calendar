@@ -4,62 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Appointments | Appointment System</title>
-
+    <link rel="stylesheet" href="style/dashboard.css">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 
-    <style>
-        body {
-            min-height: 100vh;
-            background-color: #f8f9fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .appointments-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .table th, .table td {
-            vertical-align: middle;
-        }
-
-        .badge-confirmed {
-            background-color: #28a745;
-        }
-
-        .badge-pending {
-            background-color: #ffc107;
-            color: black;
-        }
-
-        .badge-cancelled {
-            background-color: #dc3545;
-        }
-
-        .cancel-btn {
-            color: white;
-            background-color: #dc3545;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        .cancel-btn:hover {
-            background-color: #c82333;
-        }
-    </style>
 </head>
 <body>
 

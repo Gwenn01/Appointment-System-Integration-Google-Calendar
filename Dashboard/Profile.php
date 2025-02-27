@@ -4,54 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile | Appointment System</title>
-
+    <link rel="stylesheet" href="style/dashboard.css">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-
-    <style>
-        body {
-            min-height: 100vh;
-            background-color: #f8f9fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .profile-container {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-            text-align: center;
-        }
-
-        .profile-picture {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid #0d6efd;
-            margin-bottom: 10px;
-        }
-
-        .edit-profile-btn {
-            background: #0d6efd;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
-            border: none;
-            transition: 0.3s;
-        }
-
-        .edit-profile-btn:hover {
-            background: #0b5ed7;
-        }
-    </style>
 </head>
 <body>
 
