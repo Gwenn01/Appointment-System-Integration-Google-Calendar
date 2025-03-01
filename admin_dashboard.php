@@ -1,118 +1,51 @@
+<?php
+$page = isset($_GET['page']) ? $_GET['page'] : 'home'; // Default to 'home'
+
+$allowed_pages = [
+    "home" => "AdminDashboard/Home.php",
+    "appointments" => "AdminDashboard/ManageAppointment.php",
+    "users" => "AdminDashboard/ManageAccount.php",
+    "approvals" => "AdminDashboard/PendingAproval.php"
+];
+
+$page_file = isset($allowed_pages[$page]) ? $allowed_pages[$page] : null;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard | Appointment System</title>
-    
+    <link rel="stylesheet" href="style/admin_dashboard.css">
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
-    <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .sidebar {
-            width: 250px;
-            background: #343a40;
-            color: white;
-            height: 100vh;
-            position: fixed;
-            padding-top: 20px;
-            transition: all 0.3s;
-        }
-        .sidebar a {
-            color: white;
-            padding: 12px;
-            display: block;
-            text-decoration: none;
-        }
-        .sidebar a:hover {
-            background: #495057;
-        }
-        .sidebar .logout {
-            color: #dc3545;
-        }
-        .main-content {
-            margin-left: 250px;
-            width: 100%;
-            padding: 20px;
-            transition: all 0.3s;
-        }
-        .dashboard-cards .card {
-            text-align: center;
-        }
-        /* Responsive Sidebar */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 200px;
-            }
-            .main-content {
-                margin-left: 200px;
-            }
-        }
-        @media (max-width: 576px) {
-            .sidebar {
-                width: 100px;
-            }
-            .sidebar h2 {
-                display: none;
-            }
-            .sidebar a {
-                text-align: center;
-                font-size: 14px;
-                padding: 10px 5px;
-            }
-            .main-content {
-                margin-left: 100px;
-            }
-        }
-    </style>
 </head>
 <body>
-
     <!-- Sidebar Navigation -->
     <div class="sidebar">
-        <h2 class="text-center">Admin Panel</h2>
+        <h2>Admin Panel</h2>
         <ul class="list-unstyled">
-            <li><a href="#"><i class="bi bi-grid"></i> Dashboard</a></li>
-            <li><a href="#"><i class="bi bi-calendar-check"></i> Manage Appointments</a></li>
-            <li><a href="#"><i class="bi bi-people"></i> Manage Users</a></li>
-            <li><a href="#"><i class="bi bi-exclamation-circle"></i> Pending Approvals</a></li>
+            <li><a href="admin_dashboard.php?page=home"><i class="bi bi-house-door"></i> Home</a></li>
+            <li><a href="admin_dashboard.php?page=appointments"><i class="bi bi-calendar-check"></i> Manage Appointments</a></li>
+            <li><a href="admin_dashboard.php?page=users"><i class="bi bi-people"></i> Manage Account</a></li>
+            <li><a href="admin_dashboard.php?page=approvals"><i class="bi bi-exclamation-circle"></i> Pending Approvals</a></li>
             <li><a href="logout.php" class="logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
         </ul>
     </div>
 
     <!-- Main Content -->
     <div class="main-content">
-        <header class="mb-4">
-            <h1>Welcome, Admin!</h1>
-        </header>
-
-        <section class="dashboard-cards row g-4">
-            <div class="col-md-4">
-                <div class="card shadow-sm p-3">
-                    <h3><i class="bi bi-calendar-check text-primary"></i> Total Appointments</h3>
-                    <p id="totalAppointments" class="fs-3">0</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm p-3">
-                    <h3><i class="bi bi-people text-success"></i> Total Users</h3>
-                    <p id="totalUsers" class="fs-3">0</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card shadow-sm p-3">
-                    <h3><i class="bi bi-hourglass-split text-warning"></i> Pending Approvals</h3>
-                    <p id="pendingApprovals" class="fs-3">0</p>
-                </div>
-            </div>
-        </section>
+        <div id="content">
+            <?php
+            if ($page_file && file_exists($page_file)) {
+                include $page_file;
+            } else {
+                echo "<p class='text-danger'>Page not found.</p>";
+            }
+            ?>
+        </div>
     </div>
 
     <!-- Bootstrap JS -->

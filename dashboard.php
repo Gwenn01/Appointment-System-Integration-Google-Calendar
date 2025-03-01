@@ -1,5 +1,13 @@
 <?php
 $page = isset($_GET['page']) ? $_GET['page'] : 'home'; // Default to 'home'
+
+$allowed_pages = [
+    "home" => "Dashboard/Home.php",
+    "appointments" => "Dashboard/MyAppointment.php",
+    "profile" => "Dashboard/Profile.php"
+];
+
+$page_file = isset($allowed_pages[$page]) ? $allowed_pages[$page] : null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -24,27 +32,20 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'home'; // Default to 'home'
             <li><a href="logout.php" class="logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
         </ul>
     </div>
-     <!-- Main Content -->
-     <div class="main-content">
+
+    <!-- Main Content -->
+    <div class="main-content">
         <div id="content">
             <?php
-            // Load different sections based on GET parameter
-            switch ($page) {
-                case "home":
-                    include "pages/home.php";
-                    break;
-                case "appointments":
-                    include "pages/appointments.php";
-                    break;
-                case "profile":
-                    include "pages/profile.php";
-                    break;
-                default:
-                    echo "<p>Page not found.</p>";
+            if ($page_file && file_exists($page_file)) {
+                include $page_file;
+            } else {
+                echo "<p class='text-danger'>Page not found.</p>";
             }
             ?>
         </div>
     </div>
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
