@@ -1,13 +1,15 @@
-<?php 
-$host = 'localhost';
-$username = 'gwen';
-$password = '123';
-$database = "appointment_db";
+<?php
+    $host = 'localhost:3307';
+    $username = 'root';
+    $password = 'gwen123';
+    $database = 'db_appointment_system';
 
-$conn = mysqli_connect($host, $username, $password, $database);
+    // Force all inputs to be strings
+    $conn = mysqli_connect($host, $username, $password, $database);
 
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+    if ($conn->connect_error) {
+        die("Connection failed: " . $conn->connect_error);
+    } else {
+        echo "Connected successfully";
+    }
 ?>

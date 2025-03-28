@@ -1,35 +1,23 @@
 <?php
 session_start();
-require('database.php');
+require('../Database/database.php');
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if (isset($_POST['submit']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT username, password FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $stmt->store_result();
-    
-    if ($stmt->num_rows > 0) {
-        $stmt->bind_result($db_username, $db_password);
-        $stmt->fetch();
+    $sql = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+    $result = mysqli_query($conn, $sql);
 
-        if (password_verify($password, $db_password)) {
-            $_SESSION['username'] = $db_username;
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            $_SESSION['error'] = "Invalid password";
-        }
+    if (mysqli_num_rows($result) == 1) {
+        // User found, set session variables
+        $_SESSION['username'] = $username;
+        $_SESSION['password'] = $password;
+        header('Location: ../index.php');
     } else {
-        $_SESSION['error'] = "User not found";
+        // User not found, show error message
+        echo "Invalid username or password";
     }
-
-    $stmt->close();
-    $conn->close();
-
-    header("Location: login.php");
-    exit();
+   
 }
 ?>
