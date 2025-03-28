@@ -1,37 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Sign Up | Appointment System</title>
-    <link rel="stylesheet" href="style/login.css"> <!-- Link CSS file -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Customer Sign Up | Appointment System</title>
+  <link rel="stylesheet" href="style/login.css"> <!-- Link to external CSS -->
+  <link rel="stylesheet" href="style/signup.css"> <!-- Custom -->
 </head>
 <body>
 
-<div class="container">
-    <div class="signup-card"> <!-- Updated class -->
-        <h2>Create an Account</h2>
-        <p class="subtitle">Join us to book appointments easily</p>
+  <div class="container">
+    <div class="signup-card">
+      <h2>Create an Account</h2>
+      <p class="subtitle">Join us to book appointments easily</p>
 
-        <form action="register.php" method="POST">
-            <label>Full Name</label>
-            <input type="text" name="fullname" required>
+      <form action="register.php" method="POST" class="form-grid">
+        <div class="form-column">
+          <label>Full Name</label>
+          <input type="text" name="fullname" required>
 
-            <label>Username</label>
-            <input type="text" name="username" required>
+          <label>Username</label>
+          <input type="text" name="username" required>
 
-            <label>Email</label>
-            <input type="email" name="email" required>
+          <label>Email</label>
+          <input type="email" name="email" required>
 
-            <label>Password</label>
-            <input type="password" name="password" required>
+          <label>Phone Number</label>
+          <input type="tel" name="phone" required>
+        </div>
 
-            <button type="submit">Sign Up</button>
-        </form>
+        <div class="form-column">
+          <label>Password</label>
+          <input type="password" name="password" required>
 
-        <p class="link">Already have an account? <a href="login.php">Login</a></p>
+          <label>Gender</label>
+          <select name="gender" required>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+
+          <label>Birthday</label>
+          <input type="date" name="birthday" required>
+
+          <label>Address</label>
+          <input type="text" name="address" required>
+        </div>
+
+        <button type="submit" class="full-width">Sign Up</button>
+      </form>
+
+      <p class="link">Already have an account? <a href="index.php">Login</a></p>
     </div>
-</div>
+  </div>
 
 </body>
 </html>

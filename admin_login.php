@@ -29,7 +29,7 @@
             <button type="submit">Login</button>
         </form>
 
-        <p class="link"><a href="login.php">Back to Customer Login</a></p>
+        <p class="link"><a href="index.php">Back to Customer Login</a></p>
     </div>
 </div>
 
