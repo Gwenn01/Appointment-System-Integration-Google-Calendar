@@ -1,4 +1,11 @@
 <?php
+session_start();
+if (!isset($_SESSION['username'])) {
+    // User not logged in, redirect to login page
+    header('Location: index.php');
+    exit;
+}
+// get the pages components
 $page = isset($_GET['page']) ? $_GET['page'] : 'home'; // Default to 'home'
 
 $allowed_pages = [
@@ -29,7 +36,7 @@ $page_file = isset($allowed_pages[$page]) ? $allowed_pages[$page] : null;
             <li><a href="dashboard.php?page=home"><i class="bi bi-house-door"></i> Home</a></li>
             <li><a href="dashboard.php?page=appointments"><i class="bi bi-calendar-check"></i> My Appointments</a></li>
             <li><a href="dashboard.php?page=profile"><i class="bi bi-person"></i> Profile</a></li>
-            <li><a href="logout.php" class="logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            <li><a href="Authentication/logout.php" class="logout"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
         </ul>
     </div>
 

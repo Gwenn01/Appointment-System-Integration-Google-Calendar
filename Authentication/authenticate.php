@@ -2,22 +2,32 @@
 session_start();
 require('../Database/database.php');
 
-if (isset($_POST['submit']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+if (isset($_POST['submit'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
-    $result = mysqli_query($conn, $sql);
+    // Use prepared statement to prevent SQL injection
+    $stmt = $conn->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if (mysqli_num_rows($result) == 1) {
-        // User found, set session variables
-        $_SESSION['username'] = $username;
-        $_SESSION['password'] = $password;
-        header('Location: ../index.php');
+    // Check if user exists
+    if ($result && $result->num_rows === 1) {
+        $user = $result->fetch_assoc();
+
+        // Verify hashed password
+        if (password_verify($password, $user['password'])) {
+            $_SESSION['username'] = $username;
+            header('Location: ../dashboard.php');
+            exit;
+        } else {
+            $_SESSION['error'] = "Invalid Password";
+            echo "<script>alert('Incorrt password'); window.location.href='../index.php';</script>";
+        }
     } else {
-        // User not found, show error message
-        echo "Invalid username or password";
+        $_SESSION['error'] = "Invalid Username";
+        echo "<script>alert('Username not found'); window.location.href='../index.php';</script>";
     }
-   
 }
 ?>
