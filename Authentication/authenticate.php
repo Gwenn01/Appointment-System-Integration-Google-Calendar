@@ -18,6 +18,8 @@ if (isset($_POST['submit'])) {
 
         // Verify hashed password
         if (password_verify($password, $user['password'])) {
+            // Store all user data in session
+            $_SESSION['userid'] = $user['id'];
             $_SESSION['username'] = $username;
             header('Location: ../dashboard.php');
             exit;
