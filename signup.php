@@ -12,9 +12,9 @@
   <div class="container">
     <div class="signup-card">
       <h2>Create an Account</h2>
-      <p class="subtitle">Join us to book appointments easily</p>
+      <p class="subtitle">Join us to clinic appointments easily</p>
 
-      <form action="register.php" method="POST" class="form-grid">
+      <form action="ProcessData/insert_user.php" method="POST" class="form-grid">
         <div class="form-column">
           <label>Full Name</label>
           <input type="text" name="fullname" required>
@@ -46,7 +46,7 @@
           <input type="text" name="address" required>
         </div>
 
-        <button type="submit" class="full-width">Sign Up</button>
+        <button type="submit" name="submit" class="full-width">Sign Up</button>
       </form>
 
       <p class="link">Already have an account? <a href="index.php">Login</a></p>
