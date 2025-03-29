@@ -1,6 +1,5 @@
 <?php
 if (isset($_POST['submit'])) {
-
     require_once('../Database/database.php');
 
     $name = $_POST['fullname'];
@@ -13,21 +12,41 @@ if (isset($_POST['submit'])) {
     $address = $_POST['address'];
 
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+    $verify_token = bin2hex(random_bytes(16)); // secure random token
 
-    $sql = "INSERT INTO users (username, name, phone_number, email, password, gender, date_of_birth, address)
-            VALUES ('$username', '$name', '$phone_number', '$email', '$hashed_password', '$gender', '$birthday', '$address')";
+    try {
+        $sql = "INSERT INTO users (username, name, phone_number, email, password, gender, date_of_birth, address, verify_token)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    $result = mysqli_query($conn, $sql);
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssssssss", $username, $name, $phone_number, $email, $hashed_password, $gender, $birthday, $address, $verify_token);
+        $stmt->execute();
 
-    if ($result) {
         echo "<script>
-            alert('You registered successfully');
-            window.location.href = '../index.php'; 
+            alert('Registered successfully!');
+            window.location.href = '../index.php';
         </script>";
-    } else {
-        echo "Error: " . mysqli_error($conn);
+
+    } catch (mysqli_sql_exception $e) {
+        // Handle duplicate entry error (error code 1062)
+        if ($e->getCode() === 1062) {
+            $errorMessage = "Duplicate entry detected!";
+            if (strpos($e->getMessage(), 'phone_number') !== false) {
+                $errorMessage = "Phone number already exists!";
+            } elseif (strpos($e->getMessage(), 'username') !== false) {
+                $errorMessage = "Username already taken!";
+            } elseif (strpos($e->getMessage(), 'email') !== false) {
+                $errorMessage = "Email already registered!";
+            }
+
+            echo "<script>
+                alert('$errorMessage');
+                window.location.href = '../signup.php';
+            </script>";
+        } else {
+            // Other DB error
+            echo "Database error: " . $e->getMessage();
+        }
     }
-} else {
-    echo "No data submitted.";
 }
 ?>
