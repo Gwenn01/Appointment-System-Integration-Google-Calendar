@@ -19,14 +19,14 @@
             <div class="error-message"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
         <?php endif; ?>
 
-        <form action="admin_authenticate.php" method="POST">
+        <form action="Authentication/admin_authenticate.php" method="POST">
             <label>Admin Username</label>
-            <input type="text" name="admin_username" required>
+            <input type="text" name="username" required>
 
             <label>Password</label>
-            <input type="password" name="admin_password" required>
+            <input type="password" name="password" required>
 
-            <button type="submit">Login</button>
+            <button type="submit" name="submit">Login</button>
         </form>
 
         <p class="link"><a href="index.php">Back to Customer Login</a></p>

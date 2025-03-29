@@ -1,20 +1,20 @@
 <?php
-session_start();
-if (!isset($_SESSION['username'])) {
-    // User not logged in, redirect to login page
-    header('Location: index.php');
-    exit;
-}
-// get the pages components
-$page = isset($_GET['page']) ? $_GET['page'] : 'home'; // Default to 'home'
+    session_start();
+    if (!isset($_SESSION['username'])) {
+        // User not logged in, redirect to login page
+        header('Location: index.php');
+        exit;
+    }
+    // get the pages components
+    $page = isset($_GET['page']) ? $_GET['page'] : 'home'; // Default to 'home'
 
-$allowed_pages = [
-    "home" => "Dashboard/Home.php",
-    "appointments" => "Dashboard/MyAppointment.php",
-    "profile" => "Dashboard/Profile.php"
-];
+    $allowed_pages = [
+        "home" => "Dashboard/Home.php",
+        "appointments" => "Dashboard/MyAppointment.php",
+        "profile" => "Dashboard/Profile.php"
+    ];
 
-$page_file = isset($allowed_pages[$page]) ? $allowed_pages[$page] : null;
+    $page_file = isset($allowed_pages[$page]) ? $allowed_pages[$page] : null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -31,7 +31,7 @@ $page_file = isset($allowed_pages[$page]) ? $allowed_pages[$page] : null;
 <body>
     <!-- Sidebar Navigation -->
     <div class="sidebar">
-        <h2>Customer Panel</h2>
+        <h2>Welcome <?php echo $_SESSION['username'] . "!";?></h2>
         <ul class="list-unstyled">
             <li><a href="dashboard.php?page=home"><i class="bi bi-house-door"></i> Home</a></li>
             <li><a href="dashboard.php?page=appointments"><i class="bi bi-calendar-check"></i> My Appointments</a></li>
