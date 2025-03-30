@@ -66,9 +66,9 @@ $insertAppt = "INSERT INTO appointments (user_id, service_id, time_slot_id, stat
 $stmtAppt = mysqli_prepare($conn, $insertAppt);
 mysqli_stmt_bind_param($stmtAppt, "iiis", $user_id, $service_id, $time_slot_id, $notes);
 if (mysqli_stmt_execute($stmtAppt)) {
-    echo "<script>alert('Appointment booked successfully!'); window.location.href = '../Dashboard/dashboard.php?page=home';</script>";
+    echo "<script>alert('Appointment booked successfully!'); window.location.href = '../dashboard.php?page=home';</script>";
 } else {
-    echo "<script>alert('Failed to book appointment. Please try again.'); window.location.href = '../Dashboard/dashboard.php?page=home;</script>";
+    echo "<script>alert('Failed to book appointment. Please try again.'); window.location.href = '../dashboard.php?page=home;</script>";
 }
 mysqli_stmt_close($stmtAppt);
 mysqli_close($conn);

@@ -1,3 +1,9 @@
+<?php
+    if (!isset($_SESSION['userid'])) {
+        header("Location: ../login.php");
+        exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,7 +42,37 @@
     </style>
 </head>
 <body>
+<?php
+    require(__DIR__ . '/../Database/database.php'); // adjust if needed
 
+    $user_id = $_SESSION['userid'] ?? null;
+    $appointments = [];
+
+    if ($user_id) {
+        $query = "
+            SELECT 
+                a.id,
+                s.service_name,
+                t.slot_date,
+                t.slot_time,
+                a.status
+            FROM appointments a
+            JOIN services s ON a.service_id = s.id
+            JOIN time_slots t ON a.time_slot_id = t.id
+            WHERE a.user_id = ?
+            ORDER BY t.slot_date DESC, t.slot_time DESC
+        ";
+
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        while ($row = mysqli_fetch_assoc($result)) {
+            $appointments[] = $row;
+        }
+    }
+?>
     <div class="appointments-container">
         <h2 class="mb-4 text-center"><i class="bi bi-calendar-check"></i> My Appointments</h2>
 
@@ -54,30 +90,42 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>001</td>
-                        <td>Dental Checkup</td>
-                        <td>2025-03-10</td>
-                        <td>10:00 AM</td>
-                        <td><span class="badge-confirmed">Confirmed</span></td>
-                        <td><button class="cancel-btn"><i class="bi bi-x-circle"></i> Cancel</button></td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>General Consultation</td>
-                        <td>2025-03-15</td>
-                        <td>2:00 PM</td>
-                        <td><span class="badge-pending">Pending</span></td>
-                        <td><button class="cancel-btn"><i class="bi bi-x-circle"></i> Cancel</button></td>
-                    </tr>
-                    <tr>
-                        <td>003</td>
-                        <td>Skin Treatment</td>
-                        <td>2025-02-25</td>
-                        <td>4:00 PM</td>
-                        <td><span class="badge-cancelled">Cancelled</span></td>
-                        <td> - </td>
-                    </tr>
+                    <?php if (count($appointments) > 0): ?>
+                        <?php foreach ($appointments as $appt): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars(str_pad($appt['id'], 3, '0', STR_PAD_LEFT)); ?></td>
+                                <td><?php echo htmlspecialchars($appt['service_name']); ?></td>
+                                <td><?php echo htmlspecialchars($appt['slot_date']); ?></td>
+                                <td><?php echo date("g:i A", strtotime($appt['slot_time'])); ?></td>
+                                <td>
+                                    <?php
+                                        $status = strtolower($appt['status']);
+                                        $badgeClass = match($status) {
+                                            'confirmed' => 'badge bg-success',
+                                            'pending' => 'badge bg-warning text-dark',
+                                            'cancelled' => 'badge bg-danger',
+                                            default => 'badge bg-secondary'
+                                        };
+                                    ?>
+                                    <span class="<?php echo $badgeClass; ?>"><?php echo ucfirst($status); ?></span>
+                                </td>
+                                <td>
+                                    <?php if ($status !== 'cancelled'): ?>
+                                        <form method="POST" action="Backend/cancel_appointment.php" onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
+                                            <input type="hidden" name="appointment_id" value="<?php echo $appt['id']; ?>">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-x-circle"></i> Cancel
+                                            </button>
+                                        </form>
+                                    <?php else: ?>
+                                        -
+                                    <?php endif; ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr><td colspan="6" class="text-center text-muted">No appointments found.</td></tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
