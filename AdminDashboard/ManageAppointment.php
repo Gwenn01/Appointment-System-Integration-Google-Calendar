@@ -1,3 +1,27 @@
+<?php
+    if (!isset($_SESSION['adminid'])) {
+        header("Location: ../admin_login.php");
+        exit();
+    }
+    require(__DIR__ . '/../Database/database.php');
+
+    $query = "
+        SELECT 
+            a.id,
+            u.name AS client_name,
+            t.slot_date,
+            t.slot_time,
+            s.service_name,
+            a.status
+        FROM appointments a
+        JOIN users u ON a.user_id = u.id
+        JOIN time_slots t ON a.time_slot_id = t.id
+        JOIN services s ON a.service_id = s.id
+        ORDER BY t.slot_date ASC, t.slot_time ASC
+    ";
+
+    $result = mysqli_query($conn, $query);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,6 +59,25 @@
             padding: 5px 10px;
             border-radius: 5px;
         }
+        .status-pending {
+            background-color: #ffc107;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: black;
+        }
+        .status-approved {
+            background-color: #28a745;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+        }
+        .status-rejected {
+            background-color: #dc3545;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+        }
+
     </style>
 </head>
 <body>
@@ -74,31 +117,49 @@
                     </tr>
                 </thead>
                 <tbody id="appointmentsTable">
-                    <tr>
-                        <td>001</td>
-                        <td>John Doe</td>
-                        <td>2025-02-22</td>
-                        <td>10:00 AM</td>
-                        <td>Dental Checkup</td>
-                        <td><span class="status-pending">Pending</span></td>
-                        <td>
-                            <button class="btn btn-success btn-sm"><i class="bi bi-check-lg"></i> Approve</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-x-lg"></i> Reject</button>
-                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#appointmentDetails"><i class="bi bi-eye"></i> View</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>Jane Smith</td>
-                        <td>2025-02-23</td>
-                        <td>2:00 PM</td>
-                        <td>General Consultation</td>
-                        <td><span class="status-approved">Approved</span></td>
-                        <td>
-                            <button class="btn btn-secondary btn-sm"><i class="bi bi-arrow-repeat"></i> Reschedule</button>
-                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#appointmentDetails"><i class="bi bi-eye"></i> View</button>
-                        </td>
-                    </tr>
+                    <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                        <tr>
+                            <td><?php echo str_pad($row['id'], 3, '0', STR_PAD_LEFT); ?></td>
+                            <td><?php echo htmlspecialchars($row['client_name']); ?></td>
+                            <td><?php echo htmlspecialchars($row['slot_date']); ?></td>
+                            <td><?php echo date("g:i A", strtotime($row['slot_time'])); ?></td>
+                            <td><?php echo htmlspecialchars($row['service_name']); ?></td>
+                            <td>
+                                <?php
+                                    $status = strtolower($row['status']);
+                                    $statusClass = match($status) {
+                                        'pending' => 'status-pending',
+                                        'confirmed' => 'status-approved',
+                                        'cancelled' => 'status-rejected',
+                                        default => 'status-other'
+                                    };
+                                ?>
+                                <span class="<?php echo $statusClass; ?>"><?php echo ucfirst($status); ?></span>
+                            </td>
+                            <td>
+                                <?php if ($status === 'pending'): ?>
+                                    <form method="POST" action="Backend/update_status.php" style="display:inline;">
+                                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                        <input type="hidden" name="status" value="confirmed">
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            <i class="bi bi-check-lg"></i> Approve
+                                        </button>
+                                    </form>
+                                    <form method="POST" action="Backend/update_status.php" style="display:inline;">
+                                        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                        <input type="hidden" name="status" value="cancelled">
+                                        <button type="submit" class="btn btn-danger btn-sm">
+                                            <i class="bi bi-x-lg"></i> Reject
+                                        </button>
+                                    </form>
+                                <?php elseif ($status === 'confirmed'): ?>
+                                    <button class="btn btn-secondary btn-sm"><i class="bi bi-arrow-repeat"></i> Reschedule</button>
+                                <?php else: ?>
+                                    <span class="text-muted">No Actions</span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endwhile; ?>
                 </tbody>
             </table>
         </div>

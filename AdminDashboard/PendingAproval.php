@@ -1,3 +1,22 @@
+<?php
+    if (!isset($_SESSION['adminid'])) {
+        header("Location: ../admin_login.php");
+        exit();
+    }
+    require(__DIR__ . '/../Database/database.php');
+
+    // Fetch pending appointments
+    $appointments = mysqli_query($conn, "
+        SELECT a.id, u.name, a.status, t.slot_date
+        FROM appointments a
+        JOIN users u ON a.user_id = u.id
+        JOIN time_slots t ON a.time_slot_id = t.id
+        WHERE a.status = 'pending'
+    ");
+    $pending_users = mysqli_query($conn, "
+    SELECT id, name, email, created_at FROM users WHERE is_verified = 0
+");
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,31 +80,51 @@
                     </tr>
                 </thead>
                 <tbody id="approvalsTable">
+                    <?php while ($row = mysqli_fetch_assoc($appointments)): ?>
                     <tr>
-                        <td>001</td>
-                        <td>John Doe</td>
+                        <td><?php echo str_pad($row['id'], 3, '0', STR_PAD_LEFT); ?></td>
+                        <td><?php echo htmlspecialchars($row['name']); ?></td>
                         <td><span class="badge badge-appointment">Appointment</span></td>
-                        <td>2025-02-22</td>
+                        <td><?php echo htmlspecialchars($row['slot_date']); ?></td>
                         <td><span class="badge bg-warning">Pending</span></td>
                         <td>
-                            <button class="btn btn-success btn-sm"><i class="bi bi-check-lg"></i> Approve</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-x-lg"></i> Reject</button>
-                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewDetailsModal"><i class="bi bi-eye"></i> View</button>
+                            <form method="POST" action="Backend/approve_request.php" style="display:inline;">
+                                <input type="hidden" name="type" value="appointment">
+                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                <button class="btn btn-success btn-sm"><i class="bi bi-check-lg"></i> Approve</button>
+                            </form>
+                            <form method="POST" action="Backend/reject_request.php" style="display:inline;">
+                                <input type="hidden" name="type" value="appointment">
+                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                <button class="btn btn-danger btn-sm"><i class="bi bi-x-lg"></i> Reject</button>
+                            </form>
                         </td>
                     </tr>
+                    <?php endwhile; ?>
+
+                    <?php while ($row = mysqli_fetch_assoc($pending_users)): ?>
                     <tr>
-                        <td>002</td>
-                        <td>Jane Smith</td>
+                        <td><?php echo str_pad($row['id'], 3, '0', STR_PAD_LEFT); ?></td>
+                        <td><?php echo htmlspecialchars($row['name']); ?></td>
                         <td><span class="badge badge-registration">User Registration</span></td>
-                        <td>2025-02-21</td>
+                        <td><?php echo htmlspecialchars(date('Y-m-d', strtotime($row['created_at']))); ?></td>
                         <td><span class="badge bg-warning">Pending</span></td>
                         <td>
-                            <button class="btn btn-success btn-sm"><i class="bi bi-check-lg"></i> Approve</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-x-lg"></i> Reject</button>
-                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#viewDetailsModal"><i class="bi bi-eye"></i> View</button>
+                            <form method="POST" action="Backend/approve_request.php" style="display:inline;">
+                                <input type="hidden" name="type" value="registration">
+                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                <button class="btn btn-success btn-sm"><i class="bi bi-check-lg"></i> Approve</button>
+                            </form>
+                            <form method="POST" action="Backend/reject_request.php" style="display:inline;">
+                                <input type="hidden" name="type" value="registration">
+                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                                <button class="btn btn-danger btn-sm"><i class="bi bi-x-lg"></i> Reject</button>
+                            </form>
                         </td>
                     </tr>
+                    <?php endwhile; ?>
                 </tbody>
+
             </table>
         </div>
     </div>

@@ -1,3 +1,9 @@
+<?php
+    if (!isset($_SESSION['adminid'])) {
+        header("Location: ../admin_login.php");
+        exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,6 +32,29 @@
     </style>
 </head>
 <body>
+<?php
+require(__DIR__ . '/../Database/database.php');
+
+// Fetch all admins
+$admins = [];
+$adminQuery = mysqli_query($conn, "SELECT id, name, email FROM admins");
+while ($row = mysqli_fetch_assoc($adminQuery)) {
+    $row['role'] = 'Admin';
+    $admins[] = $row;
+}
+
+// Fetch all users
+$customers = [];
+$userQuery = mysqli_query($conn, "SELECT id, name, email FROM users");
+while ($row = mysqli_fetch_assoc($userQuery)) {
+    $row['role'] = 'Customer';
+    $customers[] = $row;
+}
+
+// Combine
+$accounts = array_merge($admins, $customers);
+?>
+
     <div class="container dashboard-container">
         <header class="text-center mb-4">
             <h1 class="fw-bold">Manage Accounts</h1>
@@ -59,26 +88,27 @@
                     </tr>
                 </thead>
                 <tbody id="accountsTable">
-                    <tr>
-                        <td>001</td>
-                        <td>John Doe</td>
-                        <td>johndoe@example.com</td>
-                        <td><span class="badge badge-admin">Admin</span></td>
-                        <td>
-                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#editAccountModal"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>002</td>
-                        <td>Jane Smith</td>
-                        <td>janesmith@example.com</td>
-                        <td><span class="badge badge-customer">Customer</span></td>
-                        <td>
-                            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#editAccountModal"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn btn-danger btn-sm"><i class="bi bi-trash"></i> Delete</button>
-                        </td>
-                    </tr>
+                    <?php foreach ($accounts as $account): ?>
+                        <tr>
+                            <td><?php echo str_pad($account['id'], 3, '0', STR_PAD_LEFT); ?></td>
+                            <td><?php echo htmlspecialchars($account['name']); ?></td>
+                            <td><?php echo htmlspecialchars($account['email']); ?></td>
+                            <td>
+                                <span class="badge <?php echo $account['role'] === 'Admin' ? 'badge-admin' : 'badge-customer'; ?>">
+                                    <?php echo $account['role']; ?>
+                                </span>
+                            </td>
+                            <td>
+                                <?php if ($account['role'] === 'Admin'): ?>
+                                    <a href="edit_admin.php?id=<?php echo $account['id']; ?>" class="btn btn-info btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+                                    <a href="delete_admin.php?id=<?php echo $account['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i> Delete</a>
+                                <?php else: ?>
+                                    <a href="edit_user.php?id=<?php echo $account['id']; ?>" class="btn btn-info btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+                                    <a href="delete_user.php?id=<?php echo $account['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i> Delete</a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
                 </tbody>
             </table>
         </div>

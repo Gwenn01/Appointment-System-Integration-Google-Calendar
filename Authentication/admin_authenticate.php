@@ -19,6 +19,7 @@ if (isset($_POST['submit'])) {
         // Verify hashed password
         if ($password === $user['password']) {
             $_SESSION['username'] = $username;
+            $_SESSION['adminid'] = $user['id'];
             header('Location: ../admin_dashboard.php');
             exit;
         } else {
