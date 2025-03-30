@@ -96,7 +96,7 @@ $user = mysqli_fetch_assoc($result);
 
   <!-- Change Password -->
   <h5><i class="bi bi-key"></i> Change Password</h5>
-  <form method="POST" action="ProcessData/change_password.php">
+  <form method="POST" action="Backend/change_password.php">
     <div class="mb-2">
       <input type="password" name="current_password" class="form-control" placeholder="Current Password" required>
     </div>
@@ -116,7 +116,7 @@ $user = mysqli_fetch_assoc($result);
 <div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form method="POST" action="ProcessData/update_profile.php">
+      <form method="POST" action="Backend/update_profile.php">
         <div class="modal-header">
           <h5 class="modal-title" id="editProfileModalLabel"><i class="bi bi-pencil"></i> Edit Profile</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

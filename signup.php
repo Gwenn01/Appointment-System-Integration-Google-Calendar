@@ -14,7 +14,7 @@
       <h2>Create an Account</h2>
       <p class="subtitle">Join us to clinic appointments easily</p>
 
-      <form action="ProcessData/insert_user.php" method="POST" class="form-grid">
+      <form action="Backend/insert_user.php" method="POST" class="form-grid">
         <div class="form-column">
           <label>Full Name</label>
           <input type="text" name="fullname" required>
