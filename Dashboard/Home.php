@@ -3,7 +3,41 @@
         header("Location: ../login.php");
         exit();
     }
+    require(__DIR__ . '/../Database/database.php');
+
+    $user_id = $_SESSION['userid'] ?? null;
+    $upcoming = [];
+
+    if ($user_id) {
+        $query = "
+            SELECT 
+                a.id,
+                s.service_name,
+                t.slot_date,
+                t.slot_time,
+                a.status
+            FROM appointments a
+            JOIN services s ON a.service_id = s.id
+            JOIN time_slots t ON a.time_slot_id = t.id
+            WHERE a.user_id = ?
+            AND t.slot_date >= CURDATE()
+            AND a.status IN ('pending', 'confirmed')
+            ORDER BY t.slot_date ASC, t.slot_time ASC
+            LIMIT 1
+        ";
+
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $user_id);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if ($row = mysqli_fetch_assoc($result)) {
+            $upcoming = $row;
+        }
+    }
 ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,7 +82,30 @@
         <section class="appointments">
             <h2><i class="bi bi-calendar-event"></i> Upcoming Appointments</h2>
             <div class="appointment-list">
-                <p>No upcoming appointments.</p>
+                <?php if (!empty($upcoming)): ?>
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="bi bi-clipboard-heart"></i> <?php echo htmlspecialchars($upcoming['service_name']); ?></h5>
+                            <p class="card-text">
+                                <strong>Date:</strong> <?php echo htmlspecialchars($upcoming['slot_date']); ?><br>
+                                <strong>Time:</strong> <?php echo date("g:i A", strtotime($upcoming['slot_time'])); ?><br>
+                                <strong>Status:</strong>
+                                <span class="badge 
+                                    <?php echo $upcoming['status'] == 'confirmed' ? 'bg-success' : 'bg-warning text-dark'; ?>">
+                                    <?php echo ucfirst($upcoming['status']); ?>
+                                </span>
+                            </p>
+                            <form method="POST" action="Backend/cancel_appointment.php" onsubmit="return confirm('Cancel this appointment?');">
+                                <input type="hidden" name="appointment_id" value="<?php echo $upcoming['id']; ?>">
+                                <button class="btn btn-sm btn-outline-danger" type="submit">
+                                    <i class="bi bi-x-circle"></i> Cancel Appointment
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                <?php else: ?>
+                    <p class="text-muted">No upcoming appointments.</p>
+                <?php endif; ?>
             </div>
         </section>
     </div>
