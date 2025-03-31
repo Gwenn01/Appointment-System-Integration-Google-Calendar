@@ -13,7 +13,7 @@
 <div class="container">
     <div class="login-card"> <!-- Updated class -->
         <h2>Customer Login</h2>
-        <p class="subtitle">Sign in to book your appointment</p>
+        <p class="subtitle">Sign in to book your appointment in DR. Layug's Clinic</p>
 
         <?php if (isset($_SESSION['error'])): ?>
             <div class="error-message"><?php echo $_SESSION['error']; unset($_SESSION['error']); ?></div>
