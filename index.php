@@ -34,8 +34,9 @@ if (isset($_SESSION['error_code'])) {
 
             <button type="submit" name="submit">Login</button>
         </form>
-
+        
         <p class="link">Don't have an account? <a href="signup.php">Sign Up</a></p>
+        <p class="link"><a style="color: red;" class="text-danger" href="forgot_password.php">Forgot Password?</a></p>
     </div>
 </div>
 
