@@ -15,11 +15,11 @@ if (isset($_POST['submit'])) {
     $verify_token = bin2hex(random_bytes(16)); // secure random token
 
     try {
-        $sql = "INSERT INTO users (username, name, phone_number, email, password, gender, date_of_birth, address, verify_token)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO users (username, name, phone_number, email, password, gender, date_of_birth, address)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sssssssss", $username, $name, $phone_number, $email, $hashed_password, $gender, $birthday, $address, $verify_token);
+        $stmt->bind_param("ssssssss", $username, $name, $phone_number, $email, $hashed_password, $gender, $birthday, $address);
         $stmt->execute();
 
         echo "<script>
