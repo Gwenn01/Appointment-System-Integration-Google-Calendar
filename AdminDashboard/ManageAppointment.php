@@ -12,7 +12,6 @@ $query = "
         u.name AS client_name,
         t.slot_date,
         t.start_time,
-        t.end_time,
         s.service_name,
         a.status
     FROM appointments a
@@ -76,9 +75,9 @@ $result = mysqli_query($conn, $query);
         <div class="col-md-3">
             <select class="form-select" id="filterStatus">
                 <option value="">Filter by Status</option>
-                <option value="Pending">Pending</option>
-                <option value="Approved">Approved</option>
-                <option value="Rejected">Rejected</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="cancelled">Cancelled</option>
             </select>
         </div>
     </div>
@@ -106,14 +105,13 @@ $result = mysqli_query($conn, $query);
                             'cancelled' => 'status-rejected',
                             default => 'badge bg-secondary'
                         };
-                        $start = date("g:i A", strtotime($row['start_time']));
-                        $end = date("g:i A", strtotime($row['end_time']));
+                        $time = date("g:i A", strtotime($row['start_time']));
                     ?>
                     <tr>
                         <td><?= str_pad($row['id'], 3, '0', STR_PAD_LEFT) ?></td>
                         <td><?= htmlspecialchars($row['client_name']) ?></td>
                         <td><?= htmlspecialchars($row['slot_date']) ?></td>
-                        <td><?= $start . " - " . $end ?></td>
+                        <td><?= $time ?></td>
                         <td><?= htmlspecialchars($row['service_name']) ?></td>
                         <td><span class="<?= $statusClass ?>"><?= ucfirst($status) ?></span></td>
                         <td>
@@ -144,5 +142,31 @@ $result = mysqli_query($conn, $query);
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("searchAppointment");
+        const filterSelect = document.getElementById("filterStatus");
+        const tableRows = document.querySelectorAll("#appointmentsTable tr");
+
+        function filterAppointments() {
+            const searchValue = searchInput.value.toLowerCase();
+            const selectedStatus = filterSelect.value.toLowerCase();
+
+            tableRows.forEach(row => {
+                const cells = row.querySelectorAll("td");
+                const rowText = Array.from(cells).map(td => td.textContent.toLowerCase()).join(" ");
+                const statusText = cells[5].textContent.trim().toLowerCase();
+
+                const matchesSearch = rowText.includes(searchValue);
+                const matchesStatus = !selectedStatus || statusText === selectedStatus;
+
+                row.style.display = matchesSearch && matchesStatus ? "" : "none";
+            });
+        }
+
+        searchInput.addEventListener("input", filterAppointments);
+        filterSelect.addEventListener("change", filterAppointments);
+    });
+</script>
 </body>
 </html>

@@ -61,7 +61,7 @@
 <body>
     <div class="container mt-5">
         <header class="text-center mb-4">
-            <h1 class="fw-bold">Welcome, Admin!</h1>
+            <h1 class="fw-bold ml-5">Welcome, Admin!</h1>
         </header>
         <section class="dashboard-cards row g-4">
             <div class="col-md-4">

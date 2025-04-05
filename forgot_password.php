@@ -44,8 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="email" class="form-label">Enter your email address</label>
             <input type="email" name="email" class="form-control" required>
         </div>
-        <button class="btn btn-primary w-100 mb-3">Verify Email</button>
-        <button class="btn btn-primary w-100">Send Reset Link</button>
+        <button class="btn btn-primary w-100">Verify Email</button>
     </form>
 </div>
 </body>

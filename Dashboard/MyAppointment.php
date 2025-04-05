@@ -53,7 +53,6 @@ if ($user_id) {
             s.service_name,
             t.slot_date,
             t.start_time,
-            t.end_time,
             a.status
         FROM appointments a
         JOIN services s ON a.service_id = s.id
@@ -92,7 +91,6 @@ if ($user_id) {
                     <?php foreach ($appointments as $appt): ?>
                         <?php
                             $start = date("g:i A", strtotime($appt['start_time']));
-                            $end = date("g:i A", strtotime($appt['end_time']));
                             $status = strtolower($appt['status']);
                             $badgeClass = match($status) {
                                 'confirmed' => 'badge bg-success',
@@ -105,7 +103,7 @@ if ($user_id) {
                             <td><?= htmlspecialchars(str_pad($appt['id'], 3, '0', STR_PAD_LEFT)) ?></td>
                             <td><?= htmlspecialchars($appt['service_name']) ?></td>
                             <td><?= htmlspecialchars($appt['slot_date']) ?></td>
-                            <td><?= $start ?> - <?= $end ?></td>
+                            <td><?= $start ?></td>
                             <td><span class="<?= $badgeClass ?>"><?= ucfirst($status) ?></span></td>
                             <td>
                                 <?php if ($status !== 'cancelled'): ?>

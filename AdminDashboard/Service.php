@@ -16,12 +16,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_service'])) {
         $stmt->bind_param("ss", $name, $description);
         $stmt->execute();
         $stmt->close();
-        header("Location: admin_dashboard.php?page=services"); // redirect to prevent form resubmission
+        header("Location: admin_dashboard.php?page=services");
         exit();
     }
 }
 
-// Fetch existing services
+// Handle Delete Service
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_service'])) {
+    $serviceId = intval($_POST['service_id']);
+    $stmt = $conn->prepare("DELETE FROM services WHERE id = ?");
+    $stmt->bind_param("i", $serviceId);
+    $stmt->execute();
+    $stmt->close();
+    header("Location: admin_dashboard.php?page=services");
+    exit();
+}
+
+// Fetch services
 $services = [];
 $result = mysqli_query($conn, "SELECT * FROM services ORDER BY id ASC");
 while ($row = mysqli_fetch_assoc($result)) {
@@ -60,6 +71,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <th>#</th>
                 <th>Service Name</th>
                 <th>Description</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -69,10 +81,16 @@ while ($row = mysqli_fetch_assoc($result)) {
                         <td><?= $service['id'] ?></td>
                         <td><?= htmlspecialchars($service['service_name']) ?></td>
                         <td><?= htmlspecialchars($service['description']) ?></td>
+                        <td>
+                            <form method="POST" onsubmit="return confirm('Are you sure you want to delete this service?');" style="display:inline;">
+                                <input type="hidden" name="service_id" value="<?= $service['id'] ?>">
+                                <button type="submit" name="delete_service" class="btn btn-danger btn-sm">Delete</button>
+                            </form>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
-                <tr><td colspan="3" class="text-center text-muted">No services found.</td></tr>
+                <tr><td colspan="4" class="text-center text-muted">No services found.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>
